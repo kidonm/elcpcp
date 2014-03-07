@@ -1,24 +1,32 @@
 -module(test).
--export([init/1, on_connect/1, on_message/2, on_disconnect/1]).
+-export([init/0, on_connect/1, on_message/2, on_disconnect/1]).
 -compile(export_all).
-
 -behavior(elcpcp_listener).
 
-init(_) ->
-    ok.
-
 on_connect(Client) ->
-    io:format("connect ~p", [Client]),
-    ok.
+    io:format("connect ~p~n", [Client]),
+    noreply.
 
 on_message(Client, Msg) ->
-    io:format("~p: ~p", [Client, Msg]),
-    ok.
+    io:format("~p: ~p~n", [Client, Msg]),
+    noreply.
 
 on_disconnect(Client) ->
-    io:format("disconnect ~p", [Client]),
-    ok.
+    io:format("disconnect ~p~n", [Client]),
+    noreply.
 
-start() -> 
-    ok = application:start(elcpcp).
+loop() ->
+    receive
+        Msg -> io:format("~p~n", [Msg])
+    end,
+    loop().
+
+init() ->
+    ok = application:start(elcpcp),
+    {ok, _Pid} = elcpcp_listener:start_link(?MODULE, [], []),
     
+    {ok, ClientSocket1} = gen_udp:open(10001, [binary, {active, true}]),
+    {ok, ClientSocket2} = gen_udp:open(10002, [binary, {active, true}]),
+    
+    gen_udp:send(ClientSocket1, {127,0,0,1}, 4066, <<2#11000000, "C", "o", "o", "k", "i", "e">>), 
+    gen_udp:send(ClientSocket2, {127,0,0,1}, 4066, <<2#11000000, "C", "o", "o", "k", "i", "e">>).

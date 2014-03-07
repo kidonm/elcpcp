@@ -9,8 +9,8 @@
 %% Application callbacks
 %% ===================================================================
 
-start(_StartType, _StartArgs) ->
-    network_layer:start_link(na),
+start(normal, _StartArgs) ->
+    network_layer:start_link([]),
     elcpcp_sup:start_link().
 
 stop(_State) ->
