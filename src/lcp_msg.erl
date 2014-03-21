@@ -30,9 +30,9 @@
 -define(CorNet_TS_Lite, 0).
 
 
-get_protocol(<<?CorNet_TS_Lite>>) -> cornet_msg.
+get_protocol(?CorNet_TS_Lite) -> cornet_msg.
 
-set_protocol(cornet_msg) -> <<?CorNet_TS_Lite>>.
+set_protocol(cornet_msg) -> ?CorNet_TS_Lite.
 
 %Requests
 parse(<<?DEVICE_INIT_REQ>>) -> device_init_req;

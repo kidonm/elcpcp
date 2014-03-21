@@ -1,6 +1,6 @@
 -module(elcpcp_listener).
 -export([behaviour_info/1]).
--export([connect/2, message/3, disconnect/2, start_link/3, send_message/2]).
+-export([connect/2, message/3, disconnect/2, start_link/3]).
 -export([loop/2]).
 
 behaviour_info(callbacks) ->
@@ -30,8 +30,6 @@ loop(Module, Opts) ->
             io:format("elcpcp_listener stopped, unknown return val ~p", [S])
     end.
 
-send_message({Ip, Port}, Msg) ->
-    network_layer:send_message({Ip, Port}, Msg).
 
 start_link(Module, _Args, Opts) ->
     Pid = spawn_link(?MODULE, loop, [Module, Opts]),

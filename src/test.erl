@@ -8,18 +8,13 @@ on_connect(Client) ->
     noreply.
 
 on_message(Client, Msg) ->
-    io:format("~p: ~p~n", [Client, Msg]),
+    io:format("msg from ~p: ~p~n", [Client, Msg]),
     noreply.
 
 on_disconnect(Client) ->
     io:format("disconnect ~p~n", [Client]),
     noreply.
 
-loop() ->
-    receive
-        Msg -> io:format("~p~n", [Msg])
-    end,
-    loop().
 
 init() ->
     ok = application:start(elcpcp),
@@ -29,4 +24,6 @@ init() ->
     {ok, ClientSocket2} = gen_udp:open(10002, [binary, {active, true}]),
     
     gen_udp:send(ClientSocket1, {127,0,0,1}, 4066, <<2#11000000, "C", "o", "o", "k", "i", "e">>), 
-    gen_udp:send(ClientSocket2, {127,0,0,1}, 4066, <<2#11000000, "C", "o", "o", "k", "i", "e">>).
+    gen_udp:send(ClientSocket2, {127,0,0,1}, 4066, <<2#11000000, "C", "o", "o", "k", "i", "e">>),
+
+    elcpcp:send_message({{127,0,0,1}, 10001}, {datagram_ind, cornet_msg, {kbd_up_ind, 1}}).
