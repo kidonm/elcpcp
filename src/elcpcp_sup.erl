@@ -9,9 +9,6 @@
 %% Supervisor callbacks
 -export([init/1]).
 
-%% Helper macro for declaring children of supervisor
--define(CHILD(I, Type), {I, {I, start_link, []}, permanent, 5000, Type, [I]}).
-
 %% ===================================================================
 %% API functions
 %% ===================================================================
@@ -24,5 +21,11 @@ start_link() ->
 %% ===================================================================
 
 init([]) ->
-    {ok, { {one_for_one, 5, 10}, []} }.
+    NetworkSpec = {network_layer,
+                   {network_layer, start_link, []},
+                   permanent, 1000, worker, [network_layer]},
+    ListenerSpec = {elcpcp_listener_sup,
+                    {elcpcp_listener_sup, start_link, []},
+                    permanent, 1000, supervisor, [elcpcp_listener_sup]},
+    {ok, { {one_for_one, 5, 10}, [NetworkSpec, ListenerSpec]} }.
 

@@ -2,7 +2,7 @@
  [
   {description, ""},
   {vsn, "0.0.1"},
-  {registered, []},
+  {registered, [udp_recv_pid]},
   {applications, [
                   kernel,
                   stdlib

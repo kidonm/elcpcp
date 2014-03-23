@@ -18,7 +18,8 @@ on_disconnect(Client) ->
 
 init() ->
     ok = application:start(elcpcp),
-    {ok, _Pid} = elcpcp_listener:start_link(?MODULE, [], []),
+    {ok, _} = elcpcp_listener:create(?MODULE, []),
+    {ok, _} = elcpcp_listener:create(?MODULE, []),
     
     {ok, ClientSocket1} = gen_udp:open(10001, [binary, {active, true}]),
     {ok, ClientSocket2} = gen_udp:open(10002, [binary, {active, true}]),
