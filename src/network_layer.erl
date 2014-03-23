@@ -6,7 +6,21 @@
                  terminate/2, code_change/3]).
 
 -record(state, {opts=[], listeners=[], udp_sock}).
+-record(args, {udp_port=4066}).
 
+%% private
+parse_env() -> 
+    Env = application:get_all_env(elcpcp),
+    lists:foldr(
+        fun(X, Acc) -> 
+            case X of
+                {udp_port, Port} ->
+                    Acc#args{udp_port=Port};
+                _ -> Acc
+            end
+        end,
+        #args{},
+        Env).
 
 %% api
 add_listener(Listener) ->
@@ -23,7 +37,8 @@ start_link() ->
 
 %% gen_server
 init(Opts) ->
-    {ok, UdpSocket} = gen_udp:open(4066, [binary, {active, true}]),
+    Env = parse_env(),
+    {ok, UdpSocket} = gen_udp:open(Env#args.udp_port, [binary, {active, true}]),
     {ok, #state{opts=Opts, listeners=[], udp_sock=UdpSocket}}.
 
 code_change(_OldVsn, State, _Extra) ->
@@ -40,4 +55,7 @@ handle_cast({send_udp, IP, Port, Packet}, State=#state{udp_sock=UdpSocket}) ->
 handle_cast({add_listener, Pid}, State=#state{listeners=Listeners}) ->
     {noreply, State#state{listeners=[Pid | Listeners]}}.
 
-terminate(_, _) -> ok.
+terminate(_Reason, #state{udp_sock=UdpSocket}) -> 
+    gen_udp:close(UdpSocket),
+    unregister(udp_recv_pid),
+    ok.
