@@ -5,7 +5,7 @@
 
 -include("msg_type.hrl").
 
--define(CorNet_TS_Lite, 0).
+-define(CorNet_TS_Lite, 16#0b).
 
 -define(DSP_TEXT_CMD,   2#00010000).
 -define(LED_SET_CMD,    2#00100000).
@@ -16,7 +16,7 @@
 -define(KBD_UP_IND,   2#10010001).
 
 
-parse(<<?DSP_TEXT_CMD, Dn, Row, Col, Len, Attr, Text/binary>>) ->
+parse(<< ?DSP_TEXT_CMD, Dn, Row, Col, Len, Attr, Text/binary>>) ->
     #dsp_text_cmd{display_number=Dn, row=Row, column=Col, 
                   length=Len, attributes=Attr, text=Text};
 

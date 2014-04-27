@@ -27,7 +27,7 @@
 -define(KEEP_ALV_IND,         2#11000010).
 -define(DATAGRAM_IND,         2#11110000).
 
--define(CorNet_TS_Lite, 0).
+-define(CorNet_TS_Lite, 16#0b).
 
 
 get_protocol(?CorNet_TS_Lite) -> cornet_msg.
@@ -79,7 +79,9 @@ parse(<<?DATAGRAM_IND, Protocol, Msg/binary>>) ->
     #datagram_ind{protocol=Proto, msg=ParsedMsg}.
 
 %requests
-create(device_init_req) -> <<?DEVICE_INIT_REQ>>;
+create({device_init_req, _Phone}) -> 
+	%<<?DEVICE_INIT_REQ, 0,0,0,0, Phone>>;
+	<<?DEVICE_INIT_REQ, 0, 0 ,0 , 0>>;
 
 create(rtp_port_alloc_cmd) -> <<?RTP_PORT_ALLOC_CMD>>;
 
@@ -118,4 +120,4 @@ create(keep_alv_ind) -> <<?KEEP_ALV_IND>>;
 create(#datagram_ind{protocol=Proto, msg=ParsedMsg}) ->
     Msg = Proto:create(ParsedMsg),
     Protocol = set_protocol(Proto),
-    <<?DATAGRAM_IND, Protocol, Msg/binary>>.
+    <<?DATAGRAM_IND, Protocol, Msg>>.
