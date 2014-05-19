@@ -80,7 +80,7 @@ parse(<<?DATAGRAM_IND, Protocol, Msg/binary>>) ->
 
 %requests
 create({device_init_req, _Phone}) -> 
-	%<<?DEVICE_INIT_REQ, 0,0,0,0, Phone>>;
+	%<<?DEVICE_INIT_REQ>>;
 	<<?DEVICE_INIT_REQ, 0, 0 ,0 , 0>>;
 
 create(rtp_port_alloc_cmd) -> <<?RTP_PORT_ALLOC_CMD>>;
